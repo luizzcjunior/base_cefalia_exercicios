@@ -1,0 +1,83 @@
+---
+title: "aula nivelamento"
+author: "poli"
+date: '2023-08-29'
+output: html_document
+---
+
+# Aula de nivelamento
+
+Todos os scripts estão salvos e disponíveis pra consulta. 
+
+## Exercício 1
+
+Carregue as bibliotecas "dplyr" e "stringr", logo após direcione para a pasta de trabalho:
+```{r echo=FALSE, message=FALSE}
+library(dplyr)
+library(stringr)
+
+setwd("~/documentos/R/Residência Dados Luiz")
+```
+
+Importe a base de dados (da síndrome congênita), depois visualize as 10 primeiras e últimas linhas e utilize uma função de resumo para ter uma noção de toda a base de dados.
+Elimine a última linha da base de dados.
+```{r}
+basecefalia<-read.csv("base microcefalia.csv")
+#summary(zika)
+head(basecefalia, 10)
+tail(basecefalia, 10)
+glimpse(basecefalia)
+View(basecefalia)
+basecefalia <- basecefalia[-93,]
+```
+
+**Pergunta 1**
+Quantas variáveis temos do tipo numérica e qual?
+
+## Exercício 2
+
+Calcule a quantidade de mães da raça cor branca e depois da raça cor negra (não leve em consideração para o exercício as de raça cor parda)
+```{r echo=FALSE, message=FALSE}
+#mães brancas: coluna 18
+#mães negras: coluna 19
+sum(as.numeric(basecefalia$Raca_Mae_Branca), na.rm = T)
+sum(as.numeric(basecefalia$Raca_Mae_Negra), na.rm = T)
+```
+
+
+```{r}
+
+```
+A base conta com 205 mães brancas e 84 mães negras
+
+## Exercício 3
+
+Troque os hífens por zero, mude para o formato numérico e repita a soma. 
+```{r}
+#mães brancas
+basecefalia$Raca_Mae_Branca <- str_replace_all(basecefalia$Raca_Mae_Branca, "-", "0")
+
+basecefalia$Raca_Mae_Branca <- as.numeric(basecefalia$Raca_Mae_Branca)
+
+sum(basecefalia$Raca_Mae_Branca)
+
+
+#mães negras
+basecefalia$Raca_Mae_Negra <- str_replace_all(basecefalia$Raca_Mae_Negra, "-", "0")
+
+basecefalia$Raca_Mae_Negra <- as.numeric(basecefalia$Raca_Mae_Negra)
+
+sum(basecefalia$Raca_Mae_Negra)
+```
+
+
+Realize as duas somas em um mesmo script e nomeie os títulos das colunas das somas para "total_mães_brancas" e "total_mães_negras" respectivamente
+```{r}
+basecefalia %>% summarise(total_maes_brancas=sum(Raca_Mae_Branca), total_maes_negras=sum(Raca_Mae_Negra))
+```
+
+Retire todos os hífens da tabela por zero e depois transformar as colunas que são numéricas pra formato numérico (da coluna 3 até a 67)
+```{r}
+basecefalia[basecefalia == "-"] <- "0"
+basecefalia <- basecefalia %>% mutate_at(c(3:67), as.numeric)
+```
